@@ -357,6 +357,72 @@ class Client
     }
 
     /**
+     *
+     * @param string $currency Currency
+     * @param int|float $amount Amount
+     * @param string $returnSuccess Where to redirect the user on payment success
+     * @param string $returnFailure Where to redirect the user on cancellation
+     * @param string $description A small description that will appear on the payment page (defaults to "Payment to <user_login>")
+     * @param string $ipn URL that will be called by our services once the payment is complete
+     * @param string $ipnData Custom data returned by the IPN
+     * @param bool|int $email Set to 1 to receive an email for each successful payment
+     * @param bool|int $autoSell Set to 1 to automatically sell received bitcoins at market price
+     * @param bool|int $multiPay Set to 1 to allow multiple payments on the same transaction ID
+     * @param bool|int $instantOnly Set to 1 to only allow MtGox users to pay on this transaction
+     * @internal param int $amountInt Amount in int (If 0 - will be used $amount)
+     * @return array
+     */
+    function createOrder($currency = 'BTC', $amount, $returnSuccess, $returnFailure, $description = '',  $ipn = '', $ipnData = '', $email = false, $autoSell = false, $multiPay = false, $instantOnly = false)
+    {
+
+        $request['currency'] = $currency;
+
+        $this->checkRequired($amount, 'You must specify amount or amountInt');
+
+        if (is_int($amount)) {
+            $request['amount_int'] = $amount;
+        } else {
+
+            $request['amount'] = $amount;
+        }
+
+        $this->checkRequired($returnSuccess, 'You must specify an returnSuccess');
+        $request['return_success'] = $returnSuccess;
+
+        $this->checkRequired($returnFailure, 'You must specify an returnFailure');
+        $request['return_failure'] = $returnFailure;
+
+        if (!empty($description)) {
+            $request['description'] = $description;
+        }
+
+        if (!empty($ipn)) {
+            $request['ipn'] = $ipn;
+        }
+
+        if (!empty($ipnData))
+            $request['data'] = $ipnData;
+
+        if ($email) {
+            $request['email'] = $email;
+        }
+
+        if ($autoSell) {
+            $request['autosell'] = $autoSell;
+        }
+
+        if ($multiPay) {
+            $request['multipay'] = $multiPay;
+        }
+
+        if ($instantOnly) {
+            $request['instant_only'] = $instantOnly;
+        }
+
+        return $this->query($this->pair . '/money/merchant/order/create', $request);
+    }
+
+    /**
      * Check if a variable is not empty.
      *
      * @param $variable

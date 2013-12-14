@@ -7,6 +7,10 @@
     "license": "MIT",
     "authors": [
         {
+            "name": "Pathaksa Tongpitak",
+            "homepage": "https://github.com/pathaksa"
+        },
+        {
             "name": "Dmitry Sereda",
             "homepage": "http://dicslab.com"
         }

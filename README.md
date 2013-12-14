@@ -8,15 +8,6 @@ and an example.php to demonstrate the MtGox API v2 methods.
 
 This PHP Class is open-source and may be freely distributed.
 
-Donations are welcome
-BTC: 1ABoNpvdm1e6MEAJe115bCy394ZsDgi8NJ
-
-
-Best regards,
-
-Pathaksa Tongpitak
-
-
 API Methods
 ================
 * MtGoxClient::getInfo()

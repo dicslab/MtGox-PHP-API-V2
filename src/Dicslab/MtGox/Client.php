@@ -1,6 +1,6 @@
 <?php
 
-namespace Dicslab\Mtgox;
+namespace Dicslab\MtGox;
 
 class Client
 {

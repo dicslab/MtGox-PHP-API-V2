@@ -374,11 +374,11 @@ class Client
      *
      * @param $type
      * @param $message
-     * @throws Exception
+     * @throws \Exception
      */
     function error($type, $message)
     {
-        throw new Exception($message);
+        throw new \Exception($message);
     }
 }
 

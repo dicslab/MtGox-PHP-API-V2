@@ -357,6 +357,7 @@ class Client
     }
 
     /**
+     * Create order
      *
      * @param string $currency Currency
      * @param int|float $amount Amount
@@ -420,6 +421,47 @@ class Client
         }
 
         return $this->query($this->pair . '/money/merchant/order/create', $request);
+    }
+
+    private function isValidIpn()
+    {
+        $secret = $this->apiSecret;
+        $raw_post_data = file_get_contents("php://input");
+        $good_sign = hash_hmac('sha512', $raw_post_data, base64_decode($secret), true);
+        $sign = base64_decode($_SERVER['HTTP_REST_SIGN']);
+        return ($sign == $good_sign);
+    }
+
+    function processIpn($request)
+    {
+        if (!$this->isValidIpn()) {
+            $this->error(API_ERROR_EXCEPTION, 'Signature for IPN is invalid');
+        }
+
+        $return = array(
+            'id' => $request['id'],
+            'payment_id' => $request['payment_id'],
+            'status' => $request['status']
+        );
+
+        if ($request['status'] == 'paid') {
+            $return += array(
+                'amount' => $request['amount'],
+                'currency' => $request['currency'],
+                'method' => $request['method'],
+                'currency' => $request['currency'],
+                'date' => $request['date']
+            );
+        } elseif ($request['status'] == 'partial') {
+            $return += array(
+                'amount_pending' => $request['amount_pending'],
+                'amount_valid' => $request['amount_valid'],
+                'amount_total' => $request['amount_total']
+            );
+        }
+        if (isset($request['data'])) {
+            $return['data'] = $request['data'];
+        }
     }
 
     /**

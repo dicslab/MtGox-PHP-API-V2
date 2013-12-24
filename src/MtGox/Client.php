@@ -58,7 +58,6 @@ class Client
      * @param string $method
      * @param array $request
      * @return mixed
-     * @throws Exception
      */
     public function query($method, array $request = array())
     {
@@ -124,14 +123,14 @@ class Client
         $response = curl_exec($ch);
 
         if ($response === false) {
-            throw new Exception('Unable to retrieve response: ' . curl_error($ch));
+            $this->error(API_ERROR_EXCEPTION, 'Unable to retrieve response: ' . curl_error($ch));
         }
 
         // decode JSON response
         $result = json_decode($response, true);
 
         if (!$result) {
-            throw new Exception('Invalid response, make sure the API method exists');
+            $this->error(API_ERROR_EXCEPTION, 'Invalid response, make sure the API method exists');
         }
 
         // cache result
@@ -438,30 +437,13 @@ class Client
             $this->error(API_ERROR_EXCEPTION, 'Signature for IPN is invalid');
         }
 
-        $return = array(
-            'id' => $request['id'],
-            'payment_id' => $request['payment_id'],
-            'status' => $request['status']
-        );
+        $return = new \stdClass();
 
-        if ($request['status'] == 'paid') {
-            $return += array(
-                'amount' => $request['amount'],
-                'currency' => $request['currency'],
-                'method' => $request['method'],
-                'currency' => $request['currency'],
-                'date' => $request['date']
-            );
-        } elseif ($request['status'] == 'partial') {
-            $return += array(
-                'amount_pending' => $request['amount_pending'],
-                'amount_valid' => $request['amount_valid'],
-                'amount_total' => $request['amount_total']
-            );
+        foreach ($request as $key => $value) {
+            $return->{$key} = $value;
         }
-        if (isset($request['data'])) {
-            $return['data'] = $request['data'];
-        }
+
+        return $return;
     }
 
     /**

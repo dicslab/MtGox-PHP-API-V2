@@ -38,12 +38,12 @@ class Client
      * @param $apiKey
      * @param $apiSecret
      */
-    public function __construct($apiKey, $apiSecret)
+    public function __construct($apiKey, $apiSecret, $pair = 'BTCUSD')
     {
         define('API_ERROR_EXCEPTION', 1);
 
         $this->endPoint = 'https://data.mtgox.com/api/2/';
-        $this->pair = 'BTCUSD';
+        $this->pair = $pair;
 
         $this->checkRequired($apiKey, 'You must specify an API Key');
         $this->checkRequired($apiSecret, 'You must specify an API Secret');
@@ -382,7 +382,6 @@ class Client
         if (is_int($amount)) {
             $request['amount_int'] = $amount;
         } else {
-
             $request['amount'] = $amount;
         }
 
